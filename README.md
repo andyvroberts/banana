@@ -117,6 +117,19 @@ SCD type 1.
 |ID|Surrogate|Primary|
 |Property Type|Business/Natural|Unique|
 
+### Date
+Requirement: Provide the ability to group and aggregate prices by sale date.  
+SCD type 1.
+|Data Element|Key Type|Index|
+|- |- |- |
+|ID|Surrogate|Primary|
+|Date YYYYMMDD|Business/Natural|Unique|
+|Date MM||None|
+|Date YYYY||None|  
+
+It is common in Dimensional models to have at least one date/time entity, as there is usually more than one business date related to the Facts, either reported or used in calculations.  One Date Dimension can be used to satisfy all required dates.   
+For this reason, it is also sometimes optimal to pre-populate a Date Dimension from the earliest date required, to several years in the future, removing the need to continually rebuild/reload the table in the database.  
+
 ## Fact Tables
 Fact tables do not require a primary key.  
 
