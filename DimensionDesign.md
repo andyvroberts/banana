@@ -120,7 +120,23 @@ SCD type 1.
 |Data Element|Key Type|Index|
 |- |- |- |
 |ID|Surrogate|Primary|
-|Property Type|Business/Natural|Unique|
+|Property Type|Business/Natural|Unique|#
+
+### Land Ownership Type
+Requirement: Provide statistical calculations on price, by grouping on properties that are either Lease or Free-holds.  
+SCD type 1.
+|Data Element|Key Type|Index|
+|- |- |- |
+|ID|Surrogate|Primary|
+|Land Ownership Type|Business/Natural|Unique|
+
+### New Build Flag
+Requirement: Provide statistical calculations on price, by grouping on properties that are new or old (existing).  
+SCD type 1.
+|Data Element|Key Type|Index|
+|- |- |- |
+|ID|Surrogate|Primary|
+|New Build Flag|Business/Natural|Unique|
 
 ### Date
 Requirement: Provide the ability to group and aggregate prices by sale date.  
@@ -140,6 +156,10 @@ For this reason, it is also sometimes optimal to pre-populate a Date Dimension f
 
 
 ## Indexing
+### Fact Table Indexes
+
+
+
 ### SQL Server Clustered Indexes
 We should mention this as it is specific to SQL Server.  Any database table may have just one clustered index.  This is not really an index in the traditional sense, but an organisation strategy for the table rows.  The clustered column provided in the index specification is the order in which the table data is stored.  For exmaple, if we were to create one on the Land Ownership Type, then the table rows would first contain all the Freehold records (contiguously) and then all the Leasehold records (contiguously).   
 
