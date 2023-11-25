@@ -55,13 +55,14 @@ The Dimensions are created from required source data that are not Facts. However
 |Record Type|Single Character Code|A, U, D|
   
 
-The next stage is to create Dimension entities (tables) from our list of Dimension data elements.  In order to create the most useful ones, you must understand how the data wihtin the model will be used.  
+The next stage is to create Dimension entities (tables) from our list of Dimension data elements.  
+In order to create the most useful ones, you must understand how the data wihtin the model will be used.  
 
 Regardless of the Dimensional model purpose, be it batch data processing or end-user analytics, this activity is closer to Business Analysis than it is to database design.  
 
 ### Dimension Keys
 There are only two types of keys required for Dimensions.
-1. Surrogate 
+1. Surrogate (primary key)
 2. Business (sometimes called Natural)
 
 A **Surrogate** key has only one very specific function.  
@@ -97,8 +98,8 @@ SCD type 1
 |Data Element|Key Type|Index|
 |- |- |- |
 |ID|Surrogate|Primary|
-|Postcode|Business/Natural|Composite|
-|Locality|Business/Natural|Composite|
+|Postcode|Business/Natural|Composite & Unique|
+|Locality|Business/Natural|Composite & Unique|
 
 ### Address
 Requirement: Provide statistical calculations on price, by any element of an address.  For example, by Town or County or Street name.  
@@ -106,10 +107,10 @@ SCD type 1
 |Data Element|Key Type|Index|
 |- |- |- |
 |ID|Surrogate|Primary|
-|PAON|Business/Natural|Composite|
-|SAON|Business/Natural|Composite|
-|Street|Business/Natural|Composite|
-|Postcode|Business/Natural|Composite|
+|PAON|Business/Natural|Composite & Unique|
+|SAON|Business/Natural|Composite & Unique|
+|Street|Business/Natural|Composite & Unique|
+|Postcode|Business/Natural|Composite & Unique|
 |Town||None|
 |District||None|
 |County||None|
@@ -139,7 +140,7 @@ SCD type 1.
 |New Build Flag|Business/Natural|Unique|
 
 ### Date
-Requirement: Provide the ability to group and aggregate prices by sale date.  
+Requirement: Provide the ability to group and aggregate prices by sale date, month and/or year.  
 SCD type 1.
 |Data Element|Key Type|Index|
 |- |- |- |
@@ -151,17 +152,46 @@ SCD type 1.
 It is common in Dimensional models to have at least one date/time entity, as there is usually more than one business date related to the Facts, either reported or used in calculations.  One Date Dimension can be used to satisfy all required dates.   
 For this reason, it is also sometimes optimal to pre-populate a Date Dimension from the earliest date required, to several years in the future, removing the need to continually rebuild/reload the table in the database.  
 
+### Null Dimensions
+Within the Land Registry Property Prices dataset, there are many instances where a Dimension record has a NULL column value.  A good example is the *Locality*, and in rarer occasions, the *Postcode*.   
 
+To know if this matters or not, the model designer must understand if queries will be made to specifically capture measures regarding negative conditions.  
+For example, what is the sum of property prices in January, which have no captured Postcode?   
 
+The answer to this question may identify those data values which will skew statistical analysis.  
+
+If this is important then a Dimension record must be created where the Business key of that Dimension is Null:  
+- For a single column key, there is a valid corresponding Surrogate key where the column is Null.
+- Fro a composite colulmn key, there is a valid corresponding Surrogate key where all columns are Null.
+
+This will allow queries on the Fact table to group/filter by a Null *Locality* and *Postcode*.
+
+Sometimes, a non-null string value can be substituted instead of Null, but this provides no additional beneift.  Most RDBMS optimizers provide very good IS NULL / NOT NULL predicate filtering.  
+
+<br> 
 
 
 ## Indexing
 ### Fact Table Indexes
+One index is required for each Surrogate Dimension key.  This is the same as the standard practice of indexing foreign keys.  
 
+### Dimension Table Indexes
+A primary key in a Dimension, is an index on the Surrogate key.  
+  
+In addition, an index should be created on each business key (be it constructed from a single column or composite columns).  
 
 
 ### SQL Server Clustered Indexes
 We should mention this as it is specific to SQL Server.  Any database table may have just one clustered index.  This is not really an index in the traditional sense, but an organisation strategy for the table rows.  The clustered column provided in the index specification is the order in which the table data is stored.  For exmaple, if we were to create one on the Land Ownership Type, then the table rows would first contain all the Freehold records (contiguously) and then all the Leasehold records (contiguously).   
 
 Dimensional data models are not good candidates for Clustered Indexes, due to the variety of access patterns from the many dimensional filters that can be applied to queries.  
+
+<br> 
+
+## SQL Server Features for Dimensional Models
+### Temporal Tables
+An RDMBS feature that creates a second physical table within which SQL Server automatically captures previous versions of an entire Dimension table row, and makes the history relatively easy to query.    
+https://learn.microsoft.com/en-us/sql/relational-databases/tables/temporal-tables?view=sql-server-ver16  
+
+This could be a useful feature in circumstances where tools such as Power BI are directly connected to the database tables.
 
