@@ -3,12 +3,6 @@ Dimensional modelling of the UK Land Registry **property prices** file into a SQ
 
 Creation of an SSAS reporting cube (tabular) using the dimensional model as a data source.
 
-## SQL Server
-Download and install the latest version.  
-https://www.microsoft.com/en-us/sql-server/sql-server-downloads  
-
-When creating your first server, set the local machine firewall rules to allow access to SQL Server and Analysis Server network ports.  
-https://learn.microsoft.com/en-us/sql/sql-server/install/configure-the-windows-firewall-to-allow-sql-server-access?view=sql-server-ver16
 
 ## Land Registry Prices Paid Data
 The data is pulished by the UK ONS.  
