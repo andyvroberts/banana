@@ -22,9 +22,23 @@ Each fact should be measurable.
 |- |- |- |- | 
 |Price |Amount | 1,750,000 |Sum, Avg, Min, Max, Count |
 
+Within the Land Registry Prices file, only the *Price* data element that matches this criteria.  And so this is our simple and single Fact.  
+
+### Non-Aggregating Facts
+Whilst it is certainly possible to create Dimensional models where the Fact cannot be aggregated, I would not recommend it.   
+
+A widely used example is the requirement to store and report on Monthly Balances, be they billing or bank account balances, etc.  These non-aggegating facts are ideally suited to being organised into data-marts.  
+
+#### Data-Marts
+There are many definitions for data-marts, but the one characteristic they all have in common is that they contain *Subject-Specific* data.  These marts can be modelled in two ways:  
+- As a small relational model
+- As a single de-normalised entity
+
+Modern data storage and organisation methods favour the de-normalised approach, as these can be more easily consumed by analytic tools such as Power BI or consumed by big-data processes.  
 
 ### Fact Keys
 Fact tables do not require a primary key.  
+There is no required access path to just a single record within a Fact table, and there is no requirement to enforce technical (*surrogate*) uniqueness of rows.  
 
 
 ## Creating a Dimension
@@ -139,7 +153,7 @@ SCD type 1.
 |ID|Surrogate|Primary|
 |New Build Flag|Business/Natural|Unique|
 
-### Date
+### Business Date
 Requirement: Provide the ability to group and aggregate prices by sale date, month and/or year.  
 SCD type 1.
 |Data Element|Key Type|Index|
