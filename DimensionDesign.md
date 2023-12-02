@@ -22,7 +22,7 @@ Each fact should be measurable.
 |- |- |- |- | 
 |Price |Amount | 1,750,000 |Sum, Avg, Min, Max, Count |
 
-Within the Land Registry Prices file, only the *Price* data element that matches this criteria.  And so this is our simple and single Fact.  
+Within the Land Registry Prices file, only the *Price* element matches this criteria.  And so this is our simple and single Fact.  
 
 ### Non-Aggregating Facts
 Whilst it is certainly possible to create Dimensional models where the Fact cannot be aggregated, I would not recommend it.   
@@ -129,6 +129,10 @@ SCD type 1
 |District||None|
 |County||None|
 
+As can be deduced from the busines key, an address dimension may have the side-effect of combining multiple records in the source data into a single Address.  The result may be the incorrect association of multiple actual properties to just a single address in this model, leading to incorrect aggregations.
+
+There is no modeling solution to this problem, the data must be quality checked prior to being used, and either corrected or excluded from the implementation.  
+
 ### Property Type
 Requirement: Provide statistical calculations on price, by grouping on properties that are houses, flats, etc.  
 SCD type 1.
@@ -167,7 +171,7 @@ It is common in Dimensional models to have at least one date/time entity, as the
 For this reason, it is also sometimes optimal to pre-populate a Date Dimension from the earliest date required, to several years in the future, removing the need to continually rebuild/reload the table in the database.  
 
 ### Null Dimensions
-Within the Land Registry Property Prices dataset, there are many instances where a Dimension record has a NULL column value.  A good example is the *Locality*, and in rarer occasions, the *Postcode*.   
+Within the Land Registry Property Prices dataset, there are many instances where an entire Dimension record has a NULL value.  A good example is the *Locality*, and in rarer occasions, the *Postcode*.   
 
 To know if this matters or not, the model designer must understand if queries will be made to specifically capture measures regarding negative conditions.  
 For example, what is the sum of property prices in January, which have no captured Postcode?   
