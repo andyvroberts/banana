@@ -106,7 +106,7 @@ Dimensions within the same model may be created with different SCD types, depend
 
 A final note on Dimension names.  You may create tables prefixed or suffixed by the word *Dim*.  This is OK.  Alternatively the difference between Facts and Dimension may also be apparent from their names.  In the examples below, we will not prefix names with Fact or Dim.
 
-### Location
+### Property Location
 Requirement: Provide statistical calculations on price, by Postcode, or the combination of Postcode and one of its localities.  
 SCD type 1
 |Data Element|Key Type|Index|
@@ -115,7 +115,7 @@ SCD type 1
 |Postcode|Business/Natural|Composite & Unique|
 |Locality|Business/Natural|Composite & Unique|
 
-### Address
+### Property Address
 Requirement: Provide statistical calculations on price, by any element of an address.  For example, by Town or County or Street name.  
 SCD type 1
 |Data Element|Key Type|Index|
