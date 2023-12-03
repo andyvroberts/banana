@@ -1,4 +1,15 @@
 -- ----------------------------------------------------------------------------
+-- DROP BEFORE CREATE
+-- ----------------------------------------------------------------------------
+DROP TABLE IF EXISTS dbo.prices_csv;
+DROP TABLE IF EXISTS dbo.property_location;
+DROP TABLE IF EXISTS dbo.property_address;
+DROP TABLE IF EXISTS dbo.property_type;
+DROP TABLE IF EXISTS dbo.land_ownership;
+DROP TABLE IF EXISTS dbo.new_build;
+DROP TABLE IF EXISTS dbo.business_date;
+
+-- ----------------------------------------------------------------------------
 -- CSV IMPORT
 -- ----------------------------------------------------------------------------
 CREATE TABLE dbo.prices_csv
@@ -26,14 +37,14 @@ CREATE TABLE dbo.prices_csv
 -- ----------------------------------------------------------------------------
 CREATE TABLE property_location 
 (
-    id IDENTITY (1,1) PRIMARY KEY,
+    id INT IDENTITY (1,1) PRIMARY KEY,
     postcode VARCHAR(10),
     locality VARCHAR(10)
 );
 
 CREATE TABLE property_address
 (
-    id IDENTITY (1,1) PRIMARY KEY,
+    id INT IDENTITY (1,1) PRIMARY KEY,
     paon VARCHAR(256),
     saon VARCHAR(256),
     street VARCHAR(128),
@@ -45,6 +56,27 @@ CREATE TABLE property_address
 
 CREATE TABLE property_type 
 (
-    id IDENTITY (1,1) PRIMARY KEY,
+    id INT IDENTITY (1,1) PRIMARY KEY,
     type_flag CHAR(1)
 );
+
+CREATE TABLE land_ownership 
+(
+    id INT IDENTITY (1,1) PRIMARY KEY,
+    ownership_type CHAR(1)
+);
+
+CREATE TABLE new_build 
+(
+    id INT IDENTITY (1,1) PRIMARY KEY,
+    new_build_flag CHAR(1)
+);
+
+CREATE TABLE business_date
+(
+    id INT IDENTITY (1,1) PRIMARY KEY,
+    date_yyyymmdd VARCHAR(8),
+    date_mm AS CAST(SUBSTR(date_yyyymmdd,5,2) AS INT),
+    date_yyyy AS CAST(SUBSTR(date_yyyymmdd,1,4) AS INT),
+);
+
