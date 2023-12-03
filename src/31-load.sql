@@ -1,3 +1,7 @@
+-- ----------------------------------------------------------------------------
+-- pp-complete.csv (4.6Gb) load time 3 mins, uses 4Gb RAM.
+-- 
+-- ----------------------------------------------------------------------------
 BULK INSERT dbo.prices_csv
 --FROM 'C:\Users\avrob\Downloads\pp-monthly-update-new-version.csv'
 FROM 'C:\Users\avrob\Downloads\pp-2022.csv'

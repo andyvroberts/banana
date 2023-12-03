@@ -1,7 +1,6 @@
-USE PricesPaid.dbo;
 -- ----------------------------------------------------------------------------
 -- MERGE INTO BUSINESS DATE DIMENSION TABLE.
--- EXEC business_date_load
+-- EXEC business_date_load (10 seconds, creates 10.5k rows).
 -- ----------------------------------------------------------------------------
 CREATE PROCEDURE business_date_load
 AS 
