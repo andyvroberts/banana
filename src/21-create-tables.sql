@@ -1,5 +1,6 @@
 -- ----------------------------------------------------------------------------
 -- DROP BEFORE CREATE
+-- This is needed to reset all IDENTITY keys to start from 1.
 -- ----------------------------------------------------------------------------
 DROP TABLE IF EXISTS dbo.prices_csv;
 DROP TABLE IF EXISTS dbo.property_location;
