@@ -1,20 +1,26 @@
 -- ----------------------------------------------------------------------------
 -- MERGE INTO PROPERTY LOCATION DIMENSION TABLE.
--- EXEC property_location_load (6 seconds, creates 1.9million rows).
+-- 
+-- 
 -- ----------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS property_location_load;
+
 CREATE PROCEDURE property_location_load
 AS 
     MERGE INTO property_location AS tgt
         USING 
         (
-            SELECT DISTINCT postcode, locality FROM prices_csv
+            SELECT DISTINCT TRIM(postcode) AS postcode, TRIM(locality) AS locality 
+                FROM prices_csv
             UNION
             SELECT NULL AS postcode, NULL AS locality
+			EXCEPT
+			SELECT postcode, locality FROM property_location
         )
-        AS src
+        AS src (postcode, locality)
         ON tgt.postcode = src.postcode AND tgt.locality = src.locality
     WHEN NOT MATCHED 
         THEN
             INSERT (postcode, locality) 
-            VALUES (src.postcode, src.locality)
+            VALUES (src.postcode, src.locality);
 ;

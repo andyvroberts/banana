@@ -1,7 +1,10 @@
 -- ----------------------------------------------------------------------------
 -- MERGE INTO BUSINESS DATE DIMENSION TABLE.
--- EXEC business_date_load (10 seconds, creates 10.5k rows).
+-- 
+-- 
 -- ----------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS business_date_load;
+
 CREATE PROCEDURE business_date_load
 AS 
     WITH all_dates AS 
