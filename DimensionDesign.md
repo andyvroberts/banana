@@ -112,8 +112,8 @@ SCD type 1
 |Data Element|Key Type|Index|
 |- |- |- |
 |ID|Surrogate|Primary|
-|Postcode|Business/Natural|None|
-|Locality|Business/Natural|None|
+|Postcode|Business/Natural|Composite|
+|Locality|Business/Natural|Composite|
 
 ### Property Address
 Requirement: Provide statistical calculations on price, by any element of an address.  For example, by Town or County or Street name.  
@@ -121,13 +121,13 @@ SCD type 1
 |Data Element|Key Type|Index|
 |- |- |- |
 |ID|Surrogate|Primary|
-|PAON|Business/Natural|None|
-|SAON|Business/Natural|None|
-|Street|Business/Natural|None|
-|Postcode|Business/Natural|None|
-|Town|Business/Natural|None|
-|District|Business/Natural|None|
-|County|Business/Natural|None|
+|PAON|Business/Natural|Composite|
+|SAON|Business/Natural|Composite|
+|Street|Business/Natural|Composite|
+|Postcode|Business/Natural|Composite|
+|Town|Business/Natural|Composite|
+|District|Business/Natural|Composite|
+|County|Business/Natural|Composite|
 
 As can be deduced from the busines key, an address dimension may have the side-effect of combining multiple records in the source data into a single Address.  The result may be the incorrect association of multiple actual properties to just a single address in this model, leading to incorrect aggregations.
 
@@ -139,7 +139,7 @@ SCD type 1.
 |Data Element|Key Type|Index|
 |- |- |- |
 |ID|Surrogate|Primary|
-|Property Type|Business/Natural|None|
+|Property Type|Business/Natural|Unique|
 
 ### Land Ownership Type
 Requirement: Provide statistical calculations on price, by grouping on properties that are either Lease or Free-holds.  
@@ -147,7 +147,7 @@ SCD type 1.
 |Data Element|Key Type|Index|
 |- |- |- |
 |ID|Surrogate|Primary|
-|Land Ownership Type|Business/Natural|None|
+|Land Ownership Type|Business/Natural|Unique|
 
 ### New Build Flag
 Requirement: Provide statistical calculations on price, by grouping on properties that are new or old (existing).  
@@ -155,7 +155,7 @@ SCD type 1.
 |Data Element|Key Type|Index|
 |- |- |- |
 |ID|Surrogate|Primary|
-|New Build Flag|Business/Natural|None|
+|New Build Flag|Business/Natural|Unique|
 
 ### Business Date
 Requirement: Provide the ability to group and aggregate prices by sale date, month and/or year.  

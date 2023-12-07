@@ -2,18 +2,18 @@
 -- DROP BEFORE CREATE
 -- This is needed to reset all IDENTITY keys to start from 1.
 -- ----------------------------------------------------------------------------
-DROP TABLE IF EXISTS dbo.prices_csv;
-DROP TABLE IF EXISTS dbo.property_location;
-DROP TABLE IF EXISTS dbo.property_address;
-DROP TABLE IF EXISTS dbo.property_type;
-DROP TABLE IF EXISTS dbo.land_ownership;
-DROP TABLE IF EXISTS dbo.new_build;
-DROP TABLE IF EXISTS dbo.business_date;
+DROP TABLE IF EXISTS prices_csv;
+DROP TABLE IF EXISTS property_location;
+DROP TABLE IF EXISTS property_address;
+DROP TABLE IF EXISTS property_type;
+DROP TABLE IF EXISTS land_ownership;
+DROP TABLE IF EXISTS new_build;
+DROP TABLE IF EXISTS business_date;
 
 -- ----------------------------------------------------------------------------
 -- CSV IMPORT
 -- ----------------------------------------------------------------------------
-CREATE TABLE dbo.prices_csv
+CREATE TABLE prices_csv
 (
     rowkey VARCHAR(38),
     price INT,
@@ -81,3 +81,16 @@ CREATE TABLE business_date
     date_yyyy AS CAST(SUBSTRING(date_yyyymmdd,1,4) AS INT),
 );
 
+-- ----------------------------------------------------------------------------
+-- FACTS
+-- ----------------------------------------------------------------------------
+CREATE TABLE property_price 
+(
+    price_date_id INT,
+    property_location_id INT,
+    property_address_id INT,
+    property_type_id INT,
+    land_ownership_id INT,
+    new_build_id INT,
+    price INT
+);
