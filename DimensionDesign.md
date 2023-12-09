@@ -1,4 +1,4 @@
-# Dimensional Models
+# Introduction
 Within databases, a dimensional model is data organised in relational tables, but optimised for aggregation and grouping operations on Facts.
 
 A Fact is usually some numerical value.  For example, a property Price.  
@@ -14,6 +14,9 @@ Other Dimensional models are required for reporting or other end-user analytics.
 - for older implementations, SSAS Cubes.
 - for newer implementations, Power BI models,
   
+<br>  
+
+# Strict Dimensional Models
 ## Creating a Fact
 Facts are the first items that need to be identified from the source data.  
 Each fact should be measurable.  
@@ -186,20 +189,24 @@ This will allow queries on the Fact table to group/filter by a Null *Locality* a
 
 Sometimes, a non-null string value can be substituted instead of Null, but this provides no additional beneift.  Most RDBMS optimizers provide very good IS NULL / NOT NULL predicate filtering.  
 
-<br> 
+<br>
+
+# Pragmatic Dimensional Models
 
 
-## Indexing
-### Fact Table Indexes
+<br>  
+
+# Indexing
+## Fact Table Indexes
 One index is required for each Surrogate Dimension key.  This is the same as the standard practice of indexing foreign keys.  
 
-### Dimension Table Indexes
+## Dimension Table Indexes
 A primary key in a Dimension, is an index on the Surrogate key.  
   
 In addition, an index should be created on each business key (be it constructed from a single column or composite columns).  
 
 
-### SQL Server Clustered Indexes
+## SQL Server Clustered Indexes
 We should mention this as it is specific to SQL Server.  Any database table may have just one clustered index.  This is not really an index in the traditional sense, but an organisation strategy for the table rows.  The clustered column provided in the index specification is the order in which the table data is stored.  For exmaple, if we were to create one on the Land Ownership Type, then the table rows would first contain all the Freehold records (contiguously) and then all the Leasehold records (contiguously).   
 
 Dimensional data models are not good candidates for Clustered Indexes, due to the variety of access patterns from the many dimensional filters that can be applied to queries.  

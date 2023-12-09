@@ -3,17 +3,25 @@
 -- 
 -- 
 -- ----------------------------------------------------------------------------
-INSERT INTO property_price
-    (price_date_id, property_location_id, property_address_id, price)
+INSERT INTO property_price 
+    (
+        price_date_id, 
+        property_location_id, 
+        property_address_id, 
+        property_type_id, 
+        land_ownership_id,
+        new_build_id,
+        price
+    )
 SELECT
-    ad.id, al.id, aa.id, pp.price 
+    ad.id, al.id, aa.id, at.id, ao.id, ab.id, pp.price 
 FROM 
     prices_csv pp 
 LEFT OUTER JOIN
     (
         SELECT id, date_yyyymmdd FROM business_date
     ) 
-    AS ad ON ad.date_yyyymmdd = COALESCE(FORMAT(pp.price_date, 'yyyyMMdd'), NULL)
+    AS ad ON ISNULL(ad.date_yyyymmdd, 1) = ISNULL(FORMAT(pp.price_date, 'yyyyMMdd'), 1)
 LEFT OUTER JOIN 
     (
         SELECT id, postcode, locality FROM property_location
@@ -32,4 +40,19 @@ LEFT OUTER JOIN
              ISNULL(aa.town, 1) = ISNULL(pp.town, 1) AND 
              ISNULL(aa.district, 1) = ISNULL(pp.district, 1) AND 
              ISNULL(aa.county, 1) = ISNULL(pp.county, 1)
+LEFT OUTER JOIN 
+    (
+        SELECT id, type_flag FROM property_type
+    )
+    AS at ON ISNULL(at.type_flag, 1) = ISNULL(pp.property_type, 1)
+LEFT OUTER JOIN 
+    (
+        SELECT id, ownership_type FROM land_ownership
+    )
+    AS ao ON ISNULL(ao.ownership_type, 1) = ISNULL(pp.land_ownership, 1)
+LEFT OUTER JOIN 
+    (
+        SELECT id, new_build_flag FROM new_build
+    )
+    ab ON ISNULL(ab.new_build_flag, 1) = ISNULL(pp.new_build, 1)
 ;
