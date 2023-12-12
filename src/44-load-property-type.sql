@@ -20,6 +20,15 @@ AS
         ON tgt.type_flag = src.property_type
     WHEN NOT MATCHED 
         THEN
-            INSERT (type_flag) 
-            VALUES (src.property_type)
+            INSERT (type_flag, type_desc) 
+            VALUES 
+            (
+                src.property_type,
+                CASE src.property_type
+                    WHEN 'D' THEN 'Detached'
+                    WHEN 'T' THEN 'Terraced'
+                    WHEN 'S' THEN 'Semi-Detached'
+                    WHEN 'F' THEN 'Flat'
+                ELSE 'Unknown' END
+            )
 ;

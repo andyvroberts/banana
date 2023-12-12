@@ -16,7 +16,7 @@ Other Dimensional models are required for reporting or other end-user analytics.
   
 <br>  
 
-# Strict Dimensional Models
+# Dimensional Models
 ## Creating a Fact
 Facts are the first items that need to be identified from the source data.  
 Each fact should be measurable.  
@@ -188,11 +188,6 @@ If this is important then a Dimension record must be created where the Business 
 This will allow queries on the Fact table to group/filter by a Null *Locality* and *Postcode*.
 
 Sometimes, a non-null string value can be substituted instead of Null, but this provides no additional beneift.  Most RDBMS optimizers provide very good IS NULL / NOT NULL predicate filtering.  
-
-<br>
-
-# Pragmatic Dimensional Models
-
 
 <br>  
 

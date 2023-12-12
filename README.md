@@ -18,7 +18,7 @@ https://www.gov.uk/government/statistical-data-sets/price-paid-data-downloads
 |New Build Flag|Yes/No Flag|Y=yes, N=no|
 |Land Ownership Type|Code|F=freehold, L=leasehold|
 |PAON|String|Primary Address Object|
-|SAON|String|Secondary Address Object|
+|SAON|String|Secondary Address Object (if a property is sub-divided, such as Flats)|
 |Street|String|Street Name|
 |Locality|String|Other Region Name|
 |Town|String|Postal Town|

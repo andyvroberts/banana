@@ -58,7 +58,8 @@ CREATE TABLE property_address
 CREATE TABLE property_type 
 (
     id INT IDENTITY (1,1) PRIMARY KEY,
-    type_flag CHAR(1)
+    type_flag CHAR(1),
+    type_desc VARCHAR(32)
 );
 
 CREATE TABLE land_ownership 
