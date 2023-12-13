@@ -65,13 +65,15 @@ CREATE TABLE property_type
 CREATE TABLE land_ownership 
 (
     id INT IDENTITY (1,1) PRIMARY KEY,
-    ownership_type CHAR(1)
+    ownership_type CHAR(1),
+    ownership_desc VARCHAR(32)
 );
 
 CREATE TABLE new_build 
 (
     id INT IDENTITY (1,1) PRIMARY KEY,
-    new_build_flag CHAR(1)
+    new_build_flag CHAR(1),
+    new_build_desc VARCHAR(8)
 );
 
 CREATE TABLE business_date

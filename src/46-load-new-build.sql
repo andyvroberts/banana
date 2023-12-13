@@ -20,6 +20,13 @@ AS
         ON tgt.new_build_flag = src.new_build
     WHEN NOT MATCHED 
         THEN
-            INSERT (new_build_flag) 
-            VALUES (src.new_build)
+            INSERT (new_build_flag, new_build_desc) 
+            VALUES 
+            (
+                src.new_build,
+                CASE src.new_build
+                    WHEN 'Y' THEN 'New'
+                    WHEN 'N' THEN 'Existing'
+                ELSE 'Uknown' END
+            )
 ;

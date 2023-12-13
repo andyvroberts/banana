@@ -20,6 +20,13 @@ AS
         ON tgt.ownership_type = src.ownership_type
     WHEN NOT MATCHED 
         THEN
-            INSERT (ownership_type) 
-            VALUES (src.ownership_type)
+            INSERT (ownership_type, ownership_desc) 
+            VALUES 
+            (
+                src.ownership_type,
+                CASE src.ownership_type
+                    WHEN 'F' THEN 'Freehold' 
+                    WHEN 'L' THEN 'Leasehold'
+                ELSE 'Unknown' END
+            )
 ;

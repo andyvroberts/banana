@@ -1,6 +1,6 @@
 CREATE INDEX price_date_ix ON property_price (price_date_id);
 
-CREATE INDEX price_location_ix ON property_price (price_locataion_id);
+CREATE INDEX price_location_ix ON property_price (property_location_id);
 
 CREATE INDEX price_address_ix ON property_price (property_address_id);
 
