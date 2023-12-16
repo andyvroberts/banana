@@ -14,10 +14,14 @@ For the duration of the development process, a setting of TRUE means that a work
 
 If using the workspace database, copy the *workspace server* name from the model.bim and connect to the database using SSMS.  This makes it easier to see the database structure.  
 
-## Create the Model
-### Import Data
+## Mode 1: Create the Model
+### Import Data via Data Source
 From the *Tabular Model Explorer*, right click on "Data Sources" and connect/get data.  
 Select all the PricesPaid database tables and import.  This loads all the data into the model (in memory).  
+
+### Import Data via Expressions
+From the *Tabular Model Explorer*, right click on "Expressions" and enter a SQL query, embedded within a Power Query.  
+
 
 ### Filter Data on Import
 If required, you can add filters on each table before import.  This runs a Power Query dialogue, letting you apply some transformations and/or filters on the source data.
@@ -40,26 +44,167 @@ Make this transformation:
 
 This is the resulting Power Query statement:
 ```
-each 
-    if [date_mm] = 1 then "January" else 
-    if [date_mm] = 2 then "February" else 
-    if [date_mm] = 3 then "March" else 
-    if [date_mm] = 4 then "April" else 
-    if [date_mm] = 5 then "May" else 
-    if [date_mm] = 6 then "June" else
-    if [date_mm] = 7 then "July" else
-    if [date_mm] = 8 then "August" else
-    if [date_mm] = 9 then "September" else
-    if [date_mm] = 10 then "October" else
-    if [date_mm] = 11 then "November" else
-    if [date_mm] = 12 then "December" 
-else [date_mm]
+let
+    Source = #"SQL/localhost;PricesPaid",
+    dbo_business_date = Source{[Schema="dbo",Item="business_date"]}[Data],
+    #"Renamed Columns" = Table.RenameColumns(dbo_business_date,{{"date_display", "Sale Date"}, {"date_yyyy", "Sale Year"}}),
+    #"Added Custom" = Table.AddColumn(#"Renamed Columns", "Sale Month", 
+    each 
+        if [date_mm] = 1 then "January" else 
+        if [date_mm] = 2 then "February" else 
+        if [date_mm] = 3 then "March" else 
+        if [date_mm] = 4 then "April" else 
+        if [date_mm] = 5 then "May" else 
+        if [date_mm] = 6 then "June" else
+        if [date_mm] = 7 then "July" else
+        if [date_mm] = 8 then "August" else
+        if [date_mm] = 9 then "September" else
+        if [date_mm] = 10 then "October" else
+        if [date_mm] = 11 then "November" else
+        if [date_mm] = 12 then "December" 
+    else [date_mm]
+)
+in
+    #"Added Custom"
 ```
 
 #### 2. Land Ownership (Dimension)
-When importing the land ownership table make these column changes
-- rename: ownership desc = land Use Type
+When importing the land ownership table make these column changes:
+- rename: ownership desc = land use type
 - remove: ownership type
+
+Power Query:
+```
+let
+    Source = #"SQL/localhost;PricesPaid",
+    dbo_land_ownership = Source{[Schema="dbo",Item="land_ownership"]}[Data],
+    #"Renamed Columns" = Table.RenameColumns(dbo_land_ownership,{{"ownership_desc", "Land Use Type"}}),
+    #"Removed Columns" = Table.RemoveColumns(#"Renamed Columns",{"ownership_type"})
+in
+    #"Removed Columns"
+```
+
+#### 3. New Build (Dimension)
+When importing the new build table make these column changes:
+- create a new column called New Build with a value of Yes, No or blank
+- remove: new_build_desc
+
+Power Query:
+```
+let
+    Source = #"SQL/localhost;PricesPaid",
+    dbo_new_build = Source{[Schema="dbo",Item="new_build"]}[Data],
+    #"Renamed Columns" = Table.RenameColumns(dbo_new_build,{{"new_build_desc", "new_build_desc"}}),
+    #"Added Custom" = Table.AddColumn(#"Renamed Columns", "New Build", 
+    each 
+        if [new_build_flag] = "Y" then "Yes" else
+        if [new_build_flag] = "N" then "No" 
+    else ""),
+    #"Removed Columns" = Table.RemoveColumns(#"Added Custom",{"new_build_desc"})
+in
+    #"Removed Columns"
+```
+
+#### 4. Property Address (Dimension)
+When importing the addresses table make these column changes:
+- create a new address column with concatenates paon, saon and street
+- alter the new address column to be Capital Case (not all uppercase)
+- remove the paon, saon and street
+- rename: town to Town, and capitalise the word(s)
+- rename: district to Districe and capitalise the word(s)
+- rename: county to County and capitalise the word(s)
+
+Power Query:
+```
+let
+    Source = #"SQL/localhost;PricesPaid",
+    dbo_property_address = Source{[Schema="dbo",Item="property_address"]}[Data],
+    #"Added Custom" = Table.AddColumn(dbo_property_address, "Address", 
+    each 
+        Text.Proper(Text.Lower(Text.Combine({[saon], [paon], [street]}, " ")))
+    ),
+    #"Renamed Columns" = Table.RenameColumns(#"Added Custom",{{"town", "Town"}}),
+    #"Capitalized Each Word" = Table.TransformColumns(
+        #"Renamed Columns",{{"Town", Text.Proper, type text}}),
+    #"Renamed Columns1" = Table.RenameColumns(
+        #"Capitalized Each Word",{{"district", "District"}}),
+    #"Capitalized Each Word1" = Table.TransformColumns(
+        #"Renamed Columns1",{{"District", Text.Proper, type text}}),
+    #"Renamed Columns2" = Table.RenameColumns(
+        #"Capitalized Each Word1",{{"county", "County"}}),
+    #"Capitalized Each Word2" = Table.TransformColumns(
+        #"Renamed Columns2",{{"County", Text.Proper, type text}}),
+    #"Removed Columns" = Table.RemoveColumns(
+        #"Capitalized Each Word2",{"paon", "saon", "street"})
+in
+    #"Removed Columns"
+```
+
+#### 5. Property Location (Dimension)
+When importing the property locations, make these column changes:
+- rename: locality to Locality, and capitalise the word(s)
+- rename: postcode to Postcode
+
+Power Query:
+```
+let
+    Source = #"SQL/localhost;PricesPaid",
+    dbo_property_location = Source{[Schema="dbo",Item="property_location"]}[Data],
+    #"Renamed Columns" = Table.RenameColumns(dbo_property_location,{{"locality", "Locality"}}),
+    #"Capitalized Each Word" = Table.TransformColumns(
+        #"Renamed Columns",{{"Locality", Text.Proper, type text}}),
+    #"Renamed Columns1" = Table.RenameColumns(
+        #"Capitalized Each Word",{{"postcode", "Postcode"}})
+in
+    #"Renamed Columns1"
+```
+
+#### 6. Property Type (Dimension)
+When importing the property locations, make these column changes:
+- rename: type desc to Property Type
+- remove: type flag
+
+Power Query:
+```
+let
+    Source = #"SQL/localhost;PricesPaid",
+    dbo_property_type = Source{[Schema="dbo",Item="property_type"]}[Data],
+    #"Renamed Columns" = Table.RenameColumns(dbo_property_type,{{"type_desc", "Property Type"}}),
+    #"Removed Columns" = Table.RemoveColumns(#"Renamed Columns",{"type_flag"})
+in
+    #"Removed Columns"
+```
+
+#### Property Price (Fact)
+Using the *Expressions* dialogue, create a new Query called "Prices".  In the editor dialogue, you must remember to right click the query name on the left-hand menu and tick the "Create Table" option, otherwise the expression will not actually create a table in the model.  
+
+Power Query
+```
+= Value.NativeQuery(#"SQL/localhost;PricesPaid", "SELECT * FROM dbo.property_price")
+```
+
+Note: in order to rename any price columns, the transform must be hand coded into an more extensive Power Query.  
+
+### Create Relationships
+Foreign key relationships are only imported into the model, if you import all tables at once.  For example, click on every table from the "Data Sources" in the model explorer in VS before clicking on the 'import' button.  
+
+After following the process described above, we now have to manually add all the relationships in the *Diagram View* canvas in VS.
+
+So by right-clicking on each Dimension table in turn, you can quickly relate the dimension ID columns to the correct Fact table column.  
+
+#### Manage Relationships Dialogue
+From the *Tabular Model Explorer*, right click on "Relationships" and choose "Manage Relationships".  From here create the same 1:m FKs between the Dimensions and Prices table.  
+
+
+## Mode 2: Create the Model
+Everything in Mode 1 can be pre-built in advance by using SQL Views.  
+This is the recommended approach, and so we will go back and create a Semantic Layer in the Prices Paid database, by using Views to include/exclude columns and to create the custom logic for the new fields we created in Mode 1.
+
+### Import Data via Data Source
+From the *Tabular Model Explorer*, right click on "Data Sources" and connect/get data.  
+Select all the PricesPaid database views and import.  This loads all the data into the model (in memory) and creates all the FK relationships at the same time.
+
+<br>
 
 ### Memory Usage
 VS used 6GB of RAM whilst loading the tables.  The original CSV data file is 4.8GB and the SQL Server database is 5GB.  If you only have 16GB of memory, this may be a problem, so 32GB is recommended if you want to try this development.  

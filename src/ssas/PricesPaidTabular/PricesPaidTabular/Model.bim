@@ -90,6 +90,310 @@
             }
           }
         ]
+      },
+      {
+        "name": "land_ownership",
+        "columns": [
+          {
+            "name": "id",
+            "dataType": "int64",
+            "sourceColumn": "id"
+          },
+          {
+            "name": "Land Use Type",
+            "dataType": "string",
+            "sourceColumn": "Land Use Type"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/localhost;PricesPaid\",",
+                "    dbo_land_ownership = Source{[Schema=\"dbo\",Item=\"land_ownership\"]}[Data],",
+                "    #\"Renamed Columns\" = Table.RenameColumns(dbo_land_ownership,{{\"ownership_desc\", \"Land Use Type\"}}),",
+                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Renamed Columns\",{\"ownership_type\"})",
+                "in",
+                "    #\"Removed Columns\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "new_build",
+        "columns": [
+          {
+            "name": "id",
+            "dataType": "int64",
+            "sourceColumn": "id"
+          },
+          {
+            "name": "new_build_flag",
+            "dataType": "string",
+            "sourceColumn": "new_build_flag"
+          },
+          {
+            "name": "New Build",
+            "dataType": "string",
+            "sourceColumn": "New Build"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/localhost;PricesPaid\",",
+                "    dbo_new_build = Source{[Schema=\"dbo\",Item=\"new_build\"]}[Data],",
+                "    #\"Renamed Columns\" = Table.RenameColumns(dbo_new_build,{{\"new_build_desc\", \"new_build_desc\"}}),",
+                "    #\"Added Custom\" = Table.AddColumn(#\"Renamed Columns\", \"New Build\", each if [new_build_flag] = \"Y\" then \"Yes\" else",
+                "if [new_build_flag] = \"N\" then \"No\" else \"\"),",
+                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Added Custom\",{\"new_build_desc\"})",
+                "in",
+                "    #\"Removed Columns\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "property_address",
+        "columns": [
+          {
+            "name": "id",
+            "dataType": "int64",
+            "sourceColumn": "id"
+          },
+          {
+            "name": "postcode",
+            "dataType": "string",
+            "sourceColumn": "postcode"
+          },
+          {
+            "name": "Town",
+            "dataType": "string",
+            "sourceColumn": "Town"
+          },
+          {
+            "name": "District",
+            "dataType": "string",
+            "sourceColumn": "District"
+          },
+          {
+            "name": "County",
+            "dataType": "string",
+            "sourceColumn": "County"
+          },
+          {
+            "name": "Address",
+            "dataType": "string",
+            "sourceColumn": "Address"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/localhost;PricesPaid\",",
+                "    dbo_property_address = Source{[Schema=\"dbo\",Item=\"property_address\"]}[Data],",
+                "    #\"Added Custom\" = Table.AddColumn(dbo_property_address, \"Address\", each Text.Proper(Text.Lower(Text.Combine({[saon], [paon], [street]}, \" \")",
+                "))),",
+                "    #\"Renamed Columns\" = Table.RenameColumns(#\"Added Custom\",{{\"town\", \"Town\"}}),",
+                "    #\"Capitalized Each Word\" = Table.TransformColumns(#\"Renamed Columns\",{{\"Town\", Text.Proper, type text}}),",
+                "    #\"Renamed Columns1\" = Table.RenameColumns(#\"Capitalized Each Word\",{{\"district\", \"District\"}}),",
+                "    #\"Capitalized Each Word1\" = Table.TransformColumns(#\"Renamed Columns1\",{{\"District\", Text.Proper, type text}}),",
+                "    #\"Renamed Columns2\" = Table.RenameColumns(#\"Capitalized Each Word1\",{{\"county\", \"County\"}}),",
+                "    #\"Capitalized Each Word2\" = Table.TransformColumns(#\"Renamed Columns2\",{{\"County\", Text.Proper, type text}}),",
+                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Capitalized Each Word2\",{\"paon\", \"saon\", \"street\"})",
+                "in",
+                "    #\"Removed Columns\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "property_location",
+        "columns": [
+          {
+            "name": "id",
+            "dataType": "int64",
+            "sourceColumn": "id"
+          },
+          {
+            "name": "Postcode",
+            "dataType": "string",
+            "sourceColumn": "Postcode"
+          },
+          {
+            "name": "Locality",
+            "dataType": "string",
+            "sourceColumn": "Locality"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/localhost;PricesPaid\",",
+                "    dbo_property_location = Source{[Schema=\"dbo\",Item=\"property_location\"]}[Data],",
+                "    #\"Renamed Columns\" = Table.RenameColumns(dbo_property_location,{{\"locality\", \"Locality\"}}),",
+                "    #\"Capitalized Each Word\" = Table.TransformColumns(#\"Renamed Columns\",{{\"Locality\", Text.Proper, type text}}),",
+                "    #\"Renamed Columns1\" = Table.RenameColumns(#\"Capitalized Each Word\",{{\"postcode\", \"Postcode\"}})",
+                "in",
+                "    #\"Renamed Columns1\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "property_type",
+        "columns": [
+          {
+            "name": "id",
+            "dataType": "int64",
+            "sourceColumn": "id"
+          },
+          {
+            "name": "Property Type",
+            "dataType": "string",
+            "sourceColumn": "Property Type"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/localhost;PricesPaid\",",
+                "    dbo_property_type = Source{[Schema=\"dbo\",Item=\"property_type\"]}[Data],",
+                "    #\"Renamed Columns\" = Table.RenameColumns(dbo_property_type,{{\"type_desc\", \"Property Type\"}}),",
+                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Renamed Columns\",{\"type_flag\"})",
+                "in",
+                "    #\"Removed Columns\""
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "name": "Prices",
+        "columns": [
+          {
+            "name": "price_date_id",
+            "dataType": "int64",
+            "sourceColumn": "price_date_id"
+          },
+          {
+            "name": "property_location_id",
+            "dataType": "int64",
+            "sourceColumn": "property_location_id"
+          },
+          {
+            "name": "property_address_id",
+            "dataType": "int64",
+            "sourceColumn": "property_address_id"
+          },
+          {
+            "name": "property_type_id",
+            "dataType": "int64",
+            "sourceColumn": "property_type_id"
+          },
+          {
+            "name": "land_ownership_id",
+            "dataType": "int64",
+            "sourceColumn": "land_ownership_id"
+          },
+          {
+            "name": "new_build_id",
+            "dataType": "int64",
+            "sourceColumn": "new_build_id"
+          },
+          {
+            "name": "price",
+            "dataType": "int64",
+            "sourceColumn": "price"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = Value.NativeQuery(#\"SQL/localhost;PricesPaid\", \"SELECT * FROM dbo.property_price\")",
+                "in",
+                "    Source"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "name": "7c0725df-6e57-4be0-b635-e731b798982f",
+        "fromTable": "Prices",
+        "fromColumn": "price_date_id",
+        "toTable": "business_date",
+        "toColumn": "id"
+      },
+      {
+        "name": "814c949b-a0a5-4aeb-b976-13625d7127bc",
+        "fromTable": "Prices",
+        "fromColumn": "land_ownership_id",
+        "toTable": "land_ownership",
+        "toColumn": "id"
+      },
+      {
+        "name": "c3342e23-459e-452c-8566-da41a5ed264e",
+        "fromTable": "Prices",
+        "fromColumn": "new_build_id",
+        "toTable": "new_build",
+        "toColumn": "id"
+      },
+      {
+        "name": "05b16e75-9dd8-4895-8b1f-f28bbb73925c",
+        "fromTable": "Prices",
+        "fromColumn": "property_address_id",
+        "toTable": "property_address",
+        "toColumn": "id"
+      },
+      {
+        "name": "2555959a-f6a0-4cee-aff0-07a3a182b722",
+        "fromTable": "Prices",
+        "fromColumn": "property_type_id",
+        "toTable": "property_type",
+        "toColumn": "id"
+      },
+      {
+        "name": "e51d36cd-b0d4-49ea-b0d3-dbab3ad2dfc9",
+        "fromTable": "Prices",
+        "fromColumn": "property_location_id",
+        "toTable": "property_location",
+        "toColumn": "id"
       }
     ],
     "annotations": [
