@@ -1,0 +1,103 @@
+{
+  "name": "SemanticModel",
+  "compatibilityLevel": 1600,
+  "model": {
+    "culture": "en-GB",
+    "dataSources": [
+      {
+        "type": "structured",
+        "name": "SQL/localhost;PricesPaid",
+        "connectionDetails": {
+          "protocol": "tds",
+          "address": {
+            "server": "localhost",
+            "database": "PricesPaid"
+          },
+          "authentication": null,
+          "query": null
+        },
+        "credential": {
+          "AuthenticationKind": "ServiceAccount",
+          "EncryptConnection": false
+        }
+      }
+    ],
+    "tables": [
+      {
+        "name": "business_date",
+        "columns": [
+          {
+            "name": "id",
+            "dataType": "int64",
+            "sourceColumn": "id"
+          },
+          {
+            "name": "date_yyyymmdd",
+            "dataType": "string",
+            "sourceColumn": "date_yyyymmdd"
+          },
+          {
+            "name": "Sale Date",
+            "dataType": "string",
+            "sourceColumn": "Sale Date"
+          },
+          {
+            "name": "date_mm",
+            "dataType": "int64",
+            "sourceColumn": "date_mm"
+          },
+          {
+            "name": "Sale Year",
+            "dataType": "int64",
+            "sourceColumn": "Sale Year"
+          },
+          {
+            "name": "Sale Month",
+            "dataType": "string",
+            "sourceColumn": "Sale Month"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Partition",
+            "dataView": "full",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = #\"SQL/localhost;PricesPaid\",",
+                "    dbo_business_date = Source{[Schema=\"dbo\",Item=\"business_date\"]}[Data],",
+                "    #\"Renamed Columns\" = Table.RenameColumns(dbo_business_date,{{\"date_display\", \"Sale Date\"}, {\"date_yyyy\", \"Sale Year\"}}),",
+                "    #\"Added Custom\" = Table.AddColumn(#\"Renamed Columns\", \"Sale Month\", ",
+                "    each ",
+                "    if [date_mm] = 1 then \"January\" else ",
+                "    if [date_mm] = 2 then \"February\" else ",
+                "    if [date_mm] = 3 then \"March\" else ",
+                "    if [date_mm] = 4 then \"April\" else ",
+                "    if [date_mm] = 5 then \"May\" else ",
+                "    if [date_mm] = 6 then \"June\" else",
+                "    if [date_mm] = 7 then \"July\" else",
+                "    if [date_mm] = 8 then \"August\" else",
+                "    if [date_mm] = 9 then \"September\" else",
+                "    if [date_mm] = 10 then \"October\" else",
+                "    if [date_mm] = 11 then \"November\" else",
+                "    if [date_mm] = 12 then \"December\" ",
+                "else [date_mm]",
+                ")",
+                "in",
+                "    #\"Added Custom\""
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "annotations": [
+      {
+        "name": "ClientCompatibilityLevel",
+        "value": "700"
+      }
+    ]
+  },
+  "id": "SemanticModel"
+}

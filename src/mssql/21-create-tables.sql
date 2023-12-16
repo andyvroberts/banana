@@ -80,6 +80,7 @@ CREATE TABLE business_date
 (
     id INT IDENTITY (1,1) PRIMARY KEY,
     date_yyyymmdd VARCHAR(8),
+    date_display VARCHAR(28),
     date_mm AS CAST(SUBSTRING(date_yyyymmdd,5,2) AS INT),
     date_yyyy AS CAST(SUBSTRING(date_yyyymmdd,1,4) AS INT),
 );
