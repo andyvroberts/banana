@@ -6,19 +6,20 @@ AS
 SELECT
     id AS ID,
     date_display AS [Sale Date],
+    CONCAT(date_yyyy, FORMAT(date_mm, 'd2')) AS [Date Sort],
     CASE date_mm
-        WHEN 1 THEN 'Jan'
-        WHEN 2 THEN 'Feb'
-        WHEN 3 THEN 'Mar'
-        WHEN 4 THEN 'Apr'
+        WHEN 1 THEN 'January'
+        WHEN 2 THEN 'February'
+        WHEN 3 THEN 'March'
+        WHEN 4 THEN 'April'
         WHEN 5 THEN 'May'
-        WHEN 6 THEN 'Jun'
-        WHEN 7 THEN 'Jul'
-        WHEN 8 THEN 'Aug'
-        WHEN 9 THEN 'Sep'
-        WHEN 10 THEN 'Oct'
-        WHEN 11 THEN 'Nov'
-        WHEN 12 THEN 'Dec'
+        WHEN 6 THEN 'June'
+        WHEN 7 THEN 'July'
+        WHEN 8 THEN 'August'
+        WHEN 9 THEN 'September'
+        WHEN 10 THEN 'October'
+        WHEN 11 THEN 'November'
+        WHEN 12 THEN 'December'
     ELSE CAST(date_mm AS VARCHAR) END AS [Sale Month],
     date_yyyy AS [Sale Year]
 FROM 

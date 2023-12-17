@@ -175,7 +175,7 @@ in
     #"Removed Columns"
 ```
 
-#### Property Price (Fact)
+#### 7. Property Price (Fact)
 Using the *Expressions* dialogue, create a new Query called "Prices".  In the editor dialogue, you must remember to right click the query name on the left-hand menu and tick the "Create Table" option, otherwise the expression will not actually create a table in the model.  
 
 Power Query
@@ -192,17 +192,107 @@ After following the process described above, we now have to manually add all the
 
 So by right-clicking on each Dimension table in turn, you can quickly relate the dimension ID columns to the correct Fact table column.  
 
-#### Manage Relationships Dialogue
+#### Manage Relationships
 From the *Tabular Model Explorer*, right click on "Relationships" and choose "Manage Relationships".  From here create the same 1:m FKs between the Dimensions and Prices table.  
 
+In an SSAS model, there can be only 1 active relationship between tables.  The active relationship is the one that can be used by Power Pivot or Query in Excel or Power BI for aggregations or other analytic functions.  Due to this, it is recommended that a strict Dimensional (or snowflake) model is created in SSAS.
+
+For example, if a Fact table had two dates, a Sales date and a Payment date which both had relationships to a single Date Dimension, then only one of them can be used by the model (the one specifically marked as active in the model designer).
+
+There are two possible solutions to this issue:
+1. Create multiple copies of the Dimension from the datababase (e.g. a Sales Date + Payment Date Dimensions)
+2. Create a calculated table (using DAX) by right-clicking on the "Tables" folder.  This copies the existing SSAS model table into a duplicate with a different name
+
+It should also be mentioned that the creation of measures (aggregations and functions) using DAX is also best suited to strict Dimensional models.  For example, DAX syntax cannot support many to many relationships and performs poorly with wide de-normalised tables.  
+
+The optimal format for an SSAS (or Power BI) tabular model is transactional data (Facts) connected to Dimensions that provide the ability to slice and filter using DAX functions.  
 
 ## Mode 2: Create the Model
 Everything in Mode 1 can be pre-built in advance by using SQL Views.  
-This is the recommended approach, and so we will go back and create a Semantic Layer in the Prices Paid database, by using Views to include/exclude columns and to create the custom logic for the new fields we created in Mode 1.
+Views are used to disconnect the SSAS model from the database tables.  This protects the model from database changes and so reduces the number of times the SSAS model must be refreshed in the VS project, by developers.
+
+Using views is the recommended approach, and so we will go back and create a Semantic Layer in the Prices Paid database, by using Views to include/exclude columns, rename columns, and to create the custom logic for some of the new fields we created in Mode 1.
 
 ### Import Data via Data Source
 From the *Tabular Model Explorer*, right click on "Data Sources" and connect/get data.  
-Select all the PricesPaid database views and import.  This loads all the data into the model (in memory) and creates all the FK relationships at the same time.
+Select all the PricesPaid database views and import.  This loads all the data into the model (in memory) but still does not create the FK relationships.
+
+In the SSAS model:
+1. Create the relationships between the Fact and its Dimensions
+2. Perform transformations that cannot be accomplished in SQL Server (e.g. Proper case)
+3. Ensure the SSAS model can correclty sort of price date (e.g. Year and Month in calendar order)
+
+These are the simpler Power Queries:  
+#### 1. BusinessDate (Dimension)
+```
+let
+    Source = #"SQL/localhost;PricesPaid",
+    dbo_BusinessDate = Source{[Schema="dbo",Item="BusinessDate"]}[Data],
+    #"Changed Type" = Table.TransformColumnTypes(dbo_BusinessDate,{{"Date Sort", Int64.Type}})
+in
+    #"Changed Type"
+```
+#### 2. LandOwnership (Dimension)
+```
+let
+    Source = #"SQL/localhost;PricesPaid",
+    dbo_LandOwnership = Source{[Schema="dbo",Item="LandOwnership"]}[Data]
+in
+    dbo_LandOwnership
+```
+#### 3. NewBuild (Dimension)
+```
+let
+    Source = #"SQL/localhost;PricesPaid",
+    dbo_NewBuild = Source{[Schema="dbo",Item="NewBuild"]}[Data]
+in
+    dbo_NewBuild
+```
+#### 4. PropertyAddress (Dimension)
+```
+let
+    Source = #"SQL/localhost;PricesPaid",
+    dbo_PropertyAddress = Source{[Schema="dbo",Item="PropertyAddress"]}[Data],
+    #"Capitalized Each Word" = Table.TransformColumns(
+        dbo_PropertyAddress,{
+            {"Address", Text.Proper, type text}, 
+            {"Town", Text.Proper, type text}, 
+            {"District", Text.Proper, type text}, 
+            {"County", Text.Proper, type text}
+        }
+    )
+in
+    #"Capitalized Each Word"
+```
+#### 5. Location (Dimension)
+```
+let
+    Source = #"SQL/localhost;PricesPaid",
+    dbo_Location = Source{[Schema="dbo",Item="Location"]}[Data],
+    #"Capitalized Each Word" = Table.TransformColumns(dbo_Location,{
+        {"Locality", Text.Proper, type text}})
+in
+    #"Capitalized Each Word"
+```
+#### 6. PropertyType (Dimension)
+```
+let
+    Source = #"SQL/localhost;PricesPaid",
+    dbo_PropertyType = Source{[Schema="dbo",Item="PropertyType"]}[Data]
+in
+    dbo_PropertyType
+```
+#### 7. Prices (Fact)
+```
+let
+    Source = #"SQL/localhost;PricesPaid",
+    dbo_Prices = Source{[Schema="dbo",Item="Prices"]}[Data]
+in
+    dbo_Prices
+```
+
+## Measures
+
 
 <br>
 
