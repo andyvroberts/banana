@@ -1,11 +1,11 @@
 -- ----------------------------------------------------------------------------
 -- Business Dates for SSAS model.
 -- ----------------------------------------------------------------------------
-CREATE VIEW BusinessDate
+CREATE OR ALTER VIEW BusinessDate
 AS
 SELECT
     id AS ID,
-    display_date AS SaleDate,
+    date_display AS [Sale Date],
     CASE date_mm
         WHEN 1 THEN 'Jan'
         WHEN 2 THEN 'Feb'
@@ -19,8 +19,8 @@ SELECT
         WHEN 10 THEN 'Oct'
         WHEN 11 THEN 'Nov'
         WHEN 12 THEN 'Dec'
-    ELSE CAST(date_mm AS VARCHAR) END AS SaleMonth,
-    date_yyyy AS SaleYear
+    ELSE CAST(date_mm AS VARCHAR) END AS [Sale Month],
+    date_yyyy AS [Sale Year]
 FROM 
     business_date
 ;

@@ -1,15 +1,15 @@
 -- ----------------------------------------------------------------------------
 -- Address for SSAS model.
 -- ----------------------------------------------------------------------------
-CREATE VIEW PropertyAddress
+CREATE OR ALTER VIEW PropertyAddress
 AS
 SELECT
     id AS ID,
-    LOWER(CONCAT_WS(' ', saon, paon, street)) AS Address,
-    potcode AS Postcode,
-    LOWER(town) AS Town,
-    LOWER(district) AS District,
-    LOWER(county) AS County
+    LOWER(CONCAT_WS(' ', saon, paon, street)) AS [Address],
+    postcode AS [Postcode],
+    LOWER(town) AS [Town],
+    LOWER(district) AS [District],
+    LOWER(county) AS [County]
 FROM 
     property_address
 ;

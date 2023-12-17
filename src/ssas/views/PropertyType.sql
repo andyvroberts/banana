@@ -1,11 +1,11 @@
 -- ----------------------------------------------------------------------------
--- Land Ownership for SSAS model.
+-- Property Type for SSAS model.
 -- ----------------------------------------------------------------------------
-CREATE OR ALTER VIEW LandOwnership
+CREATE OR ALTER VIEW PropertyType
 AS
 SELECT
     id AS ID,
-    ownership_desc AS [Land Use Type]
+    type_desc AS [Property Type]
 FROM 
-    land_ownership
+    property_type
 ;

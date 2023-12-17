@@ -1,11 +1,12 @@
 -- ----------------------------------------------------------------------------
--- Land Ownership for SSAS model.
+-- Location for SSAS model.
 -- ----------------------------------------------------------------------------
-CREATE OR ALTER VIEW LandOwnership
+CREATE OR ALTER VIEW Location
 AS
 SELECT
     id AS ID,
-    ownership_desc AS [Land Use Type]
+    postcode AS [Postcode],
+    LOWER(locality) AS [Locality]
 FROM 
-    land_ownership
+    property_location
 ;
