@@ -275,6 +275,12 @@
               ]
             }
           }
+        ],
+        "measures": [
+          {
+            "name": "Measure 1",
+            "expression": "SUM(Prices[Price])"
+          }
         ]
       },
       {

@@ -297,4 +297,5 @@ in
 <br>
 
 ### Memory Usage
-VS used 6GB of RAM whilst loading the tables.  The original CSV data file is 4.8GB and the SQL Server database is 5GB.  If you only have 16GB of memory, this may be a problem, so 32GB is recommended if you want to try this development.  
+VS used 6GB of RAM whilst loading the SSAS model (tables).  The original CSV data file is 4.8GB and the SQL Server database is 5GB.  If you only have 16GB of memory, this may be a problem, so 32GB is recommended if you want to try this development using this example data source.  
+
