@@ -1,5 +1,5 @@
 # Introduction
-Microsoft Analysis Services currently has 3 products.  They all use the Vertipaq data engine and can be queried using DAX functions.   A DAX function usually results in the creation of a Measure. 
+Microsoft Analysis Services currently has 3 products.  They all use the Vertipaq data engine and can be queried using DAX functions.   A DAX function usually results in the creation of a Measure for analytic purposes, or creation of Comparisons for operational purposes.   
 https://learn.microsoft.com/en-us/analysis-services/analysis-services-overview?view=asallproducts-allversions  
 
 The products are:
@@ -25,11 +25,23 @@ Vertipaq provides several mechanisms for optimising data storage, this lists som
 
 
 ### Data Analysis Expressions (DAX)
-A column-oriented, declarative, query synatax.
+A column-oriented, declarative, query synatax.  DAX has two main purposes:
+1. Aggregation (to create measures)
+2. Filters (to drill down or to make comparisons)
 
-There are two methods by which DAX can add business meaning to data:
-1. Create a calculated column (using the "defined" function), this is only applicable for data within a single row
-2. Create a measure (aggregation), this is only applicable for data within a single column  
+#### Aggregation
+Measures are calculated by performing aggregations on Facts.  
+```
+MonthlySales = CALCULATE ( SUM ( Prices[Price] ), BusinessDate[Sale Month])
+```
+
+#### Filter
+In order to compare an aggregation of a Fact by Dimensions, use a _Filter_ expression.  
+```
+1999Sales = CALCULATE ( SUM ( Prices[Price] ), 
+    FILTER ( BusinessDate, [Sale Year] = 1999 ) )
+```
+
 
 #### Data Refresh
 All calculated columns are re-created whenever the database table is refreshed.  
